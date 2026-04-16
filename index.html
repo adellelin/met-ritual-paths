@@ -260,10 +260,12 @@ html, body {
   padding: 0 20px;
 }
 
-.stop-image-icon {
-  width: 48px;
-  height: 48px;
-  opacity: .3;
+.stop-image-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  display: block;
 }
 
 .stop-body {
@@ -585,13 +587,7 @@ html, body {
   </div>
 
   <div class="stop-image-box" id="stop-image-box">
-    <!-- SVG placeholder image -->
-    <svg class="stop-image-icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <rect x="4" y="8" width="40" height="32" rx="2" stroke="#9a9590" stroke-width="1.5"/>
-      <circle cx="17" cy="20" r="4" stroke="#9a9590" stroke-width="1.5"/>
-      <path d="M4 34l10-10 8 8 6-6 10 8" stroke="#9a9590" stroke-width="1.5" stroke-linejoin="round"/>
-    </svg>
-    <p class="stop-image-label" id="stop-image-label">Object image placeholder</p>
+    <img class="stop-image-photo" id="stop-image-photo" src="" alt="" />
   </div>
 
   <div class="stop-body">
@@ -663,79 +659,84 @@ html, body {
 // ─────────────────────────────
 const OBJECTS = [
   {
-    title: 'Amulet Box',
-    culture: 'Tibet',
-    date: '18th–19th century',
-    gallery: 'Gallery 206',
-    gestureLabel: 'Enclose with both hands',
+    title: 'Standing Buddha Offering Protection',
+    culture: 'India (Uttar Pradesh, Mathura)',
+    date: 'Late 5th century',
+    gallery: 'Gallery 236',
+    image: 'images/stop1_standing_buddha_38198.jpg',
+    gestureLabel: 'Raise hand, palm outward',
     prompt: {
-      see:    'This small container was made to hold sacred objects close to the body. Its enclosure is the protection.',
-      did:    'It may have been worn as a portable shelter — a sealed world carried against the skin, holding what could not be left unguarded.',
-      invite: 'Cup both hands around the space in front of you. Hold them together for a moment, as if containing something fragile.'
+      see:    'This Buddha stands with one hand raised, palm facing outward. The gesture is abhaya mudra — do not be afraid. The protection is offered, not enforced.',
+      did:    'It may have stood at an entry point or in a place of vulnerability, radiating assurance. The raised hand is not a command but an address to fear.',
+      invite: 'Raise your right hand slowly, palm facing outward. Hold it at shoulder height for a moment.'
     },
     transition: {
-      reason: 'This stop shifts protection from containment into active warding through sound and stance.',
+      reason: 'This stop moves from the open offer of protection into protection carried — a god armed and sent forward.',
       next: 1
     }
   },
   {
-    title: 'Hand Bell with Guardian Figure',
-    culture: 'Indonesia',
-    date: '14th–16th century',
-    gallery: 'Gallery 247',
-    gestureLabel: 'Raise hand as shield',
+    title: 'Panel of a Portable Shrine with Karttikeya, the God of War',
+    culture: 'Pakistan (Gandhara)',
+    date: '6th century',
+    gallery: 'Gallery 237',
+    image: 'images/stop2_karttikeya_panel_38181.jpg',
+    gestureLabel: 'Cup hands and carry forward',
     prompt: {
-      see:    'A guardian figure crowns this bell. Its sound and posture were made to meet what approached from outside.',
-      did:    'It may have been rung at thresholds — marking the edge of safe space, calling attention to what needed warding.',
-      invite: 'Raise your dominant hand slowly in front of you, palm facing outward. Pause at shoulder height, as if holding something back.'
+      see:    'Karttikeya, god of war, appears here not triumphant but carried — contained in a portable shrine. He is protection made mobile, held close while traveling.',
+      did:    'This panel may have been part of an object taken on journeys, keeping the god\'s force available when the familiar and safe was left behind.',
+      invite: 'Cup both hands together as if carrying something precious forward. Take one slow step.'
     },
     transition: {
-      reason: 'This stop moves from warding outward threats to protecting what passes between people.',
+      reason: 'From a god carried through danger, we move to one who stands still and holds — whose raised hand calms across centuries.',
       next: 2
     }
   },
   {
-    title: 'Letter Box with Amulets',
-    culture: 'Japan',
-    date: 'Edo period, 17th–18th century',
-    gallery: 'Gallery 226',
-    gestureLabel: 'Trace a boundary',
+    title: 'Buddha Offering Protection',
+    culture: 'Sri Lanka',
+    date: '10th century',
+    gallery: 'Gallery 242',
+    image: 'images/stop3_buddha_sri_lanka_39197.jpg',
+    gestureLabel: 'Hand over heart',
     prompt: {
-      see:    'This box carried written words and attached them to objects of protection. The space between sender and receiver needed guarding.',
-      did:    'It may have secured messages of importance, wrapping language in protective form so that meaning could travel safely.',
-      invite: 'Use one finger to trace a slow rectangle in the air in front of you — a boundary around something that matters.'
+      see:    'This Sri Lankan Buddha also raises a hand in the gesture of protection, but the form is different — more interior, more absorbed. The stillness itself is the shelter.',
+      did:    'It may have been placed in a domestic or temple context, a presence that steadied the people around it simply by existing.',
+      invite: 'Place your right hand over your heart. Breathe once slowly, feeling the contact.'
     },
     transition: {
-      reason: 'This stop turns from marking boundaries to striking down what crosses them.',
+      reason: 'From interior stillness, we move outward — to a figure built to confront, to mark a boundary that cannot be crossed.',
       next: 3
     }
   },
   {
-    title: 'Demon King Bell Top',
-    culture: 'Indonesia',
-    date: '14th–16th century',
+    title: 'Top of a Bell in the Form of a Demon King or Guardian',
+    culture: 'Indonesia (Java)',
+    date: '12th–13th century',
     gallery: 'Gallery 247',
-    gestureLabel: 'Strike downward',
+    image: 'images/stop4_bell_demon_king_39062.jpg',
+    gestureLabel: 'Draw a circle — a boundary',
     prompt: {
-      see:    'A powerful figure tops this bell — not gentle, but forceful. Protection here is confrontation, not softness.',
-      did:    'It may have been sounded to dispel or command — a strike against what could not be reasoned with.',
-      invite: 'Raise your hand above your head, then bring it down in one deliberate motion, stopping just before your waist.'
+      see:    'A demon king or guardian sits atop this bell. Its face was made to be seen before anything else — to meet threat with presence, to announce: this space is held.',
+      did:    'When struck, the bell announced a threshold. The figure\'s expression was protection through confrontation — it claimed the boundary first.',
+      invite: 'Draw a firm circle in the air in front of you — a boundary. Close it completely.'
     },
     transition: {
-      reason: 'The final stop draws protection inward — toward the self, the breath, the chest.',
+      reason: 'The final stop moves from claiming a boundary to sealing it — a ritual dagger whose purpose is to fix and pin what threatens.',
       next: 4
     }
   },
   {
-    title: 'Votive Bell',
-    culture: 'China',
-    date: 'Eastern Zhou dynasty, 7th–5th century BCE',
-    gallery: 'Gallery 207',
-    gestureLabel: 'Place hand over heart',
+    title: 'Ritual Dagger (Phurba) and Stand',
+    culture: 'Tibet',
+    date: 'Late 14th–early 15th century',
+    gallery: 'Gallery 253',
+    image: 'images/stop5_phurba_75826.jpg',
+    gestureLabel: 'Point downward — hold',
     prompt: {
-      see:    'This bell was made for ceremony and dedication. Its sound was an act of commitment — an offering toward protection.',
-      did:    'It may have been used to mark vows, to call presence, or to seal intentions between a person and something greater.',
-      invite: 'Place your hand flat against your chest. Stay with that contact for a breath.'
+      see:    'The phurba is a ritual dagger used not to cut but to pin — to fix obstacles in place, to drive harmful forces into the earth and hold them there.',
+      did:    'It may have been used in ceremony to protect a space by immobilizing what threatened it. The act was as much symbolic as forceful.',
+      invite: 'Point one finger downward toward the ground. Hold it there for three seconds.'
     },
     transition: null
   }
@@ -811,9 +812,10 @@ function loadStop(idx) {
     pips.appendChild(d);
   }
 
-  // Image placeholder label
-  document.getElementById('stop-image-label').textContent =
-    `${obj.title} — ${obj.gallery}`;
+  // Object image
+  const img = document.getElementById('stop-image-photo');
+  img.src = obj.image;
+  img.alt = obj.title;
 
   // Header info
   document.getElementById('stop-gallery').textContent = obj.gallery;
