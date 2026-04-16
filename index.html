@@ -38,51 +38,77 @@ html, body {
 #screen-start {
   background: var(--black);
   color: var(--white);
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  padding: 48px 28px 60px;
-  gap: 0;
+  flex-direction: column;
+  padding: 0;
 }
 
-.start-rule {
-  width: 40px;
-  height: 1.5px;
-  background: var(--accent);
-  margin-bottom: 32px;
+.start-top {
+  padding: 44px 28px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 }
 
 .start-eyebrow {
-  font-size: 10px;
-  letter-spacing: .2em;
+  font-size: 9px;
+  letter-spacing: .22em;
   text-transform: uppercase;
-  color: rgba(248,246,242,.4);
-  margin-bottom: 14px;
+  color: rgba(248,246,242,.3);
+  margin-bottom: 10px;
 }
 
 .start-title {
   font-family: var(--serif);
-  font-size: 2.4rem;
+  font-size: 1.9rem;
   font-weight: normal;
-  letter-spacing: .02em;
-  line-height: 1.15;
-  margin-bottom: 20px;
+  letter-spacing: .01em;
+  line-height: 1.1;
+  color: var(--white);
 }
 
-.start-description {
-  font-size: .9rem;
-  line-height: 1.75;
-  color: rgba(248,246,242,.5);
-  max-width: 280px;
-  margin: 0 auto 48px;
+.theme-grid {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 8px 20px 40px;
+  gap: 10px;
 }
 
-.start-paths-label {
-  font-size: 9px;
+.theme-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  border: none;
+  border-radius: 4px;
+  background: rgba(255,255,255,.06);
+  color: var(--white);
+  font-family: var(--serif);
+  font-size: 1.8rem;
+  font-weight: normal;
+  letter-spacing: .01em;
+  cursor: pointer;
+  text-align: left;
+  -webkit-tap-highlight-color: transparent;
+  transition: background .15s;
+  position: relative;
+  overflow: hidden;
+  min-height: 72px;
+}
+.theme-btn.active { background: var(--accent); }
+.theme-btn.inactive { color: rgba(248,246,242,.3); cursor: default; }
+.theme-btn.active:active { background: #8f3e2c; }
+.theme-btn .theme-arrow { font-size: 1.2rem; opacity: .5; flex-shrink: 0; }
+.theme-btn .theme-tag {
+  font-family: var(--sans);
+  font-size: 8px;
   letter-spacing: .18em;
   text-transform: uppercase;
-  color: rgba(248,246,242,.3);
-  margin-bottom: 14px;
+  color: rgba(248,246,242,.4);
+  position: absolute;
+  bottom: 12px;
+  left: 24px;
 }
 
 .btn-path {
@@ -484,8 +510,39 @@ html, body {
   line-height: 1.7;
   color: rgba(248,246,242,.6);
   max-width: 300px;
-  margin-bottom: 52px;
+  margin-bottom: 28px;
   font-style: italic;
+}
+
+/* ── GALLERY MAP ─────────────────────────────── */
+.trans-map-wrap {
+  width: 100%;
+  max-width: 300px;
+  margin-bottom: 36px;
+}
+.trans-map-eyebrow {
+  font-size: 8px;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: rgba(248,246,242,.28);
+  margin-bottom: 10px;
+  text-align: left;
+}
+.trans-map-walk {
+  font-size: .72rem;
+  color: rgba(248,246,242,.38);
+  margin-top: 9px;
+  letter-spacing: .01em;
+  text-align: left;
+}
+#gallery-map { display: block; width: 100%; height: auto; }
+
+@keyframes dash-flow {
+  to { stroke-dashoffset: -20; }
+}
+@keyframes origin-pulse {
+  0%, 100% { opacity: 1;  r: 5; }
+  50%       { opacity: .5; r: 7; }
 }
 
 /* ── ARTIFACT ────────────────────────────────── */
@@ -547,16 +604,32 @@ html, body {
      START SCREEN
 ════════════════════════════════════════ -->
 <div class="screen active" id="screen-start">
-  <div class="start-rule"></div>
-  <p class="start-eyebrow">The Metropolitan Museum of Art</p>
-  <h1 class="start-title">Met Ritual&nbsp;Paths</h1>
-  <p class="start-description">
-    Choose a path through ritual objects.<br>
-    Each stop asks for a small action.<br>
-    Your gestures accumulate into a trace you can keep.
-  </p>
-  <p class="start-paths-label">Available Paths</p>
-  <button class="btn-path" onclick="showScreen('overview')">Protection</button>
+  <div class="start-top">
+    <p class="start-eyebrow">The Metropolitan Museum of Art</p>
+    <h1 class="start-title">Ritual&nbsp;Paths</h1>
+  </div>
+  <div class="theme-grid">
+    <button class="theme-btn inactive" disabled>
+      Grief
+      <span class="theme-tag">Coming soon</span>
+    </button>
+    <button class="theme-btn inactive" disabled>
+      Love
+      <span class="theme-tag">Coming soon</span>
+    </button>
+    <button class="theme-btn inactive" disabled>
+      Fear
+      <span class="theme-tag">Coming soon</span>
+    </button>
+    <button class="theme-btn active" onclick="showScreen('overview')">
+      Protection
+      <span class="theme-arrow">→</span>
+    </button>
+    <button class="theme-btn inactive" disabled>
+      Transformation
+      <span class="theme-tag">Coming soon</span>
+    </button>
+  </div>
 </div>
 
 <!-- ════════════════════════════════════════
@@ -628,6 +701,13 @@ html, body {
   <h3 class="trans-title" id="trans-title"></h3>
   <p class="trans-gallery" id="trans-gallery"></p>
   <p class="trans-reason" id="trans-reason"></p>
+
+  <div class="trans-map-wrap">
+    <p class="trans-map-eyebrow">Getting there</p>
+    <svg id="gallery-map" viewBox="0 0 300 160" xmlns="http://www.w3.org/2000/svg"></svg>
+    <p class="trans-map-walk" id="trans-map-walk"></p>
+  </div>
+
   <button class="btn-path" onclick="continueToStop()">Continue →</button>
 </div>
 
@@ -741,6 +821,99 @@ const OBJECTS = [
     transition: null
   }
 ];
+
+// ─────────────────────────────
+// GALLERY MAP
+// ─────────────────────────────
+const GALLERY_NODES = {
+  'Gallery 206': { x: 44,  y: 32,  label: '206' },
+  'Gallery 207': { x: 44,  y: 72,  label: '207' },
+  'Gallery 226': { x: 158, y: 96,  label: '226' },
+  'Gallery 247': { x: 252, y: 130, label: '247' },
+};
+
+const CORRIDOR_Y = 110;
+
+const WALK_HINTS = [
+  'Head south through the Japanese galleries — Gallery 247 is at the far end.',
+  'Walk back north through Gallery 226. It\'s two rooms up on your left.',
+  'Return south — Gallery 247 is at the end of the same corridor.',
+  'Head north through Chinese galleries to Gallery 207.',
+];
+
+function buildGalleryMap(fromKey, toKey, stopIndex) {
+  const svg = document.getElementById('gallery-map');
+  svg.innerHTML = '';
+  const ns = 'http://www.w3.org/2000/svg';
+
+  const mk = (tag, attrs, style) => {
+    const el = document.createElementNS(ns, tag);
+    Object.entries(attrs).forEach(([k, v]) => el.setAttribute(k, v));
+    if (style) el.style.cssText = style;
+    return el;
+  };
+
+  svg.appendChild(mk('rect', { x: 0, y: 0, width: 300, height: 160, fill: 'rgba(255,255,255,.04)', rx: 4 }));
+
+  svg.appendChild(mk('line', {
+    x1: 30, y1: CORRIDOR_Y, x2: 270, y2: CORRIDOR_Y,
+    stroke: 'rgba(255,255,255,.09)', 'stroke-width': 8, 'stroke-linecap': 'round',
+  }));
+
+  Object.values(GALLERY_NODES).forEach(n => {
+    svg.appendChild(mk('line', {
+      x1: n.x, y1: n.y + 10, x2: n.x, y2: CORRIDOR_Y,
+      stroke: 'rgba(255,255,255,.07)', 'stroke-width': 2, 'stroke-dasharray': '3 3',
+    }));
+  });
+
+  Object.entries(GALLERY_NODES).forEach(([key, n]) => {
+    const isCurrent = key === fromKey;
+    const isDest    = key === toKey;
+    const roomFill  = isCurrent ? 'rgba(122,53,38,.35)' : isDest ? 'rgba(248,246,242,.12)' : 'rgba(255,255,255,.06)';
+    const stroke    = isCurrent ? '#7a3526' : isDest ? 'rgba(248,246,242,.7)' : 'rgba(255,255,255,.2)';
+    const sw        = isCurrent || isDest ? 1.5 : 1;
+
+    svg.appendChild(mk('rect', { x: n.x - 15, y: n.y - 11, width: 30, height: 22, rx: 3, fill: roomFill, stroke, 'stroke-width': sw }));
+
+    const lbl = mk('text', {
+      x: n.x, y: n.y + 4,
+      'text-anchor': 'middle',
+      fill: isCurrent || isDest ? 'rgba(248,246,242,.9)' : 'rgba(255,255,255,.3)',
+      'font-size': 8, 'font-family': '-apple-system,sans-serif', 'letter-spacing': '.05em',
+    });
+    lbl.textContent = n.label;
+    svg.appendChild(lbl);
+  });
+
+  const from = GALLERY_NODES[fromKey];
+  const to   = GALLERY_NODES[toKey];
+  if (from && to) {
+    const pts = `${from.x},${from.y + 11} ${from.x},${CORRIDOR_Y} ${to.x},${CORRIDOR_Y} ${to.x},${to.y + 11}`;
+
+    svg.appendChild(mk('polyline', { points: pts, fill: 'none', stroke: 'rgba(122,53,38,.35)', 'stroke-width': 8, 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }));
+
+    const dash = mk('polyline', {
+      points: pts, fill: 'none',
+      stroke: '#c0614e', 'stroke-width': 2,
+      'stroke-linecap': 'round', 'stroke-linejoin': 'round',
+      'stroke-dasharray': '6 4',
+    }, 'animation: dash-flow .65s linear infinite;');
+    svg.appendChild(dash);
+
+    const arrY = to.y - 11;
+    svg.appendChild(mk('polygon', {
+      points: `${to.x},${arrY} ${to.x - 5},${arrY + 8} ${to.x + 5},${arrY + 8}`,
+      fill: '#c0614e',
+    }));
+
+    svg.appendChild(mk('circle', {
+      cx: from.x, cy: from.y, r: 5, fill: '#7a3526',
+    }, 'animation: origin-pulse 1.4s ease-in-out infinite; transform-box: fill-box; transform-origin: center;'));
+  }
+
+  document.getElementById('trans-map-walk').textContent = WALK_HINTS[stopIndex] || '';
+}
 
 // ─────────────────────────────
 // STATE
@@ -1104,6 +1277,8 @@ function nextStop() {
   document.getElementById('trans-title').textContent   = next.title;
   document.getElementById('trans-gallery').textContent = `${next.gallery} · ${next.culture}`;
   document.getElementById('trans-reason').textContent  = tr ? tr.reason : '';
+
+  buildGalleryMap(OBJECTS[currentStop].gallery, next.gallery, currentStop);
 
   document.getElementById('transition-overlay').classList.add('on');
 }
