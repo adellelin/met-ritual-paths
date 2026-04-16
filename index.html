@@ -1156,11 +1156,20 @@ function onOrient(e) {
   continueStroke(x, y);
 }
 
+let prevLW = 1;
+
 function beginStroke(x, y) {
   isDrawing = true;
   lastX = x; lastY = y; lastT = Date.now();
+  prevLW = 18;
   hasDrawn = true;
   document.getElementById('canvas-hint').style.opacity = '0';
+
+  // Ink pool dot at stroke start
+  ctx.beginPath();
+  ctx.arc(x, y, 9, 0, Math.PI * 2);
+  ctx.fillStyle = 'rgba(18,18,18,0.85)';
+  ctx.fill();
 }
 
 function continueStroke(x, y) {
@@ -1172,11 +1181,16 @@ function continueStroke(x, y) {
   const dist  = Math.sqrt(dx * dx + dy * dy);
   const speed = dist / dt;
 
-  // Slow → thick (max 14), fast → thin (min 1)
-  const t  = Math.min(speed / 1.8, 1);
-  const lw = 14 - 13 * t;
+  // Curved speed response: thick blobs when slow, hair-thin when fast
+  // Power curve makes the thick→thin transition fast and dramatic
+  const t      = Math.min(speed / 1.4, 1);
+  const target = 22 - 21.7 * Math.pow(t, 0.5);  // 22px → 0.3px
 
-  const alpha = 0.72 + Math.random() * 0.28;
+  // Smooth interpolation so line weight transitions feel like real ink
+  prevLW = prevLW * 0.65 + target * 0.35;
+  const lw = Math.max(0.3, prevLW);
+
+  const alpha = 0.78 + Math.random() * 0.22;
   ctx.beginPath();
   ctx.moveTo(lastX, lastY);
   ctx.lineTo(x, y);
@@ -1186,14 +1200,15 @@ function continueStroke(x, y) {
   ctx.strokeStyle = `rgba(18,18,18,${alpha.toFixed(2)})`;
   ctx.stroke();
 
-  if (Math.random() < 0.25 && lw > 4) {
-    const jx = x + (Math.random() - .5) * 2;
-    const jy = y + (Math.random() - .5) * 2;
+  // Ink texture: occasional faint ghost stroke alongside thick lines
+  if (Math.random() < 0.3 && lw > 5) {
+    const jx = x + (Math.random() - .5) * 3;
+    const jy = y + (Math.random() - .5) * 3;
     ctx.beginPath();
     ctx.moveTo(lastX, lastY);
     ctx.lineTo(jx, jy);
-    ctx.lineWidth   = lw * 0.35;
-    ctx.strokeStyle = `rgba(18,18,18,${(alpha * 0.4).toFixed(2)})`;
+    ctx.lineWidth   = lw * 0.3;
+    ctx.strokeStyle = `rgba(18,18,18,${(alpha * 0.35).toFixed(2)})`;
     ctx.stroke();
   }
 
@@ -1259,6 +1274,10 @@ function nextStop() {
   document.getElementById('trans-title').textContent   = next.title;
   document.getElementById('trans-gallery').textContent = `${next.gallery} · ${next.culture}`;
   document.getElementById('trans-reason').textContent  = tr ? tr.reason : '';
+
+  const fromGallery = OBJECTS[currentStop].gallery;
+  const toGallery   = next.gallery;
+  buildGalleryMap(fromGallery, toGallery, currentStop);
 
   document.getElementById('transition-overlay').classList.add('on');
 }
