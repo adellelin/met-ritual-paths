@@ -1,0 +1,1237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Met Ritual Paths</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --black: #1a1a1a;
+  --white: #f8f6f2;
+  --gray-light: #e2dfd9;
+  --gray-mid: #9a9590;
+  --accent: #7a3526;
+  --serif: Georgia, 'Times New Roman', serif;
+  --sans: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+}
+
+html, body {
+  height: 100%;
+  font-family: var(--sans);
+  background: var(--white);
+  color: var(--black);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+.screen {
+  display: none;
+  flex-direction: column;
+  min-height: 100vh;
+  min-height: -webkit-fill-available;
+}
+.screen.active { display: flex; }
+
+/* ── START ───────────────────────────────────── */
+#screen-start {
+  background: var(--black);
+  color: var(--white);
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 48px 28px 60px;
+  gap: 0;
+}
+
+.start-rule {
+  width: 40px;
+  height: 1.5px;
+  background: var(--accent);
+  margin-bottom: 32px;
+}
+
+.start-eyebrow {
+  font-size: 10px;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: rgba(248,246,242,.4);
+  margin-bottom: 14px;
+}
+
+.start-title {
+  font-family: var(--serif);
+  font-size: 2.4rem;
+  font-weight: normal;
+  letter-spacing: .02em;
+  line-height: 1.15;
+  margin-bottom: 20px;
+}
+
+.start-description {
+  font-size: .9rem;
+  line-height: 1.75;
+  color: rgba(248,246,242,.5);
+  max-width: 280px;
+  margin: 0 auto 48px;
+}
+
+.start-paths-label {
+  font-size: 9px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: rgba(248,246,242,.3);
+  margin-bottom: 14px;
+}
+
+.btn-path {
+  display: inline-block;
+  padding: 15px 44px;
+  border: 1px solid var(--accent);
+  background: transparent;
+  color: var(--white);
+  font-family: var(--sans);
+  font-size: .8rem;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background .15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.btn-path:active { background: var(--accent); }
+
+/* ── OVERVIEW ────────────────────────────────── */
+#screen-overview { background: var(--white); }
+
+.overview-header {
+  padding: 48px 24px 28px;
+  border-bottom: 1px solid var(--gray-light);
+}
+
+.eyebrow {
+  font-size: 9px;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--gray-mid);
+  margin-bottom: 8px;
+}
+
+.screen-title {
+  font-family: var(--serif);
+  font-size: 2rem;
+  font-weight: normal;
+  letter-spacing: .02em;
+  margin-bottom: 10px;
+}
+
+.overview-meta {
+  font-size: .82rem;
+  color: var(--gray-mid);
+}
+
+.path-list {
+  flex: 1;
+  padding: 24px;
+  overflow-y: auto;
+}
+
+.path-list-label {
+  font-size: 9px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--gray-mid);
+  margin-bottom: 16px;
+}
+
+.obj-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--gray-light);
+}
+.obj-row:last-child { border-bottom: none; }
+
+.obj-num {
+  font-size: 11px;
+  color: var(--gray-mid);
+  min-width: 18px;
+  padding-top: 2px;
+}
+
+.obj-info { flex: 1; }
+.obj-name {
+  font-family: var(--serif);
+  font-size: 1rem;
+  margin-bottom: 4px;
+}
+.obj-sub {
+  font-size: .78rem;
+  color: var(--gray-mid);
+}
+
+.obj-gallery {
+  font-size: .72rem;
+  color: var(--accent);
+  text-align: right;
+  white-space: nowrap;
+  padding-top: 2px;
+}
+
+.screen-footer {
+  padding: 20px 24px 36px;
+  border-top: 1px solid var(--gray-light);
+}
+
+.btn-dark {
+  display: block;
+  width: 100%;
+  padding: 18px;
+  background: var(--black);
+  color: var(--white);
+  border: none;
+  font-family: var(--sans);
+  font-size: .78rem;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.btn-dark:active { opacity: .8; }
+
+/* ── STOP ────────────────────────────────────── */
+#screen-stop {
+  background: var(--white);
+  overflow-y: auto;
+}
+
+.stop-header {
+  padding: 18px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--gray-light);
+  position: sticky;
+  top: 0;
+  background: var(--white);
+  z-index: 10;
+}
+
+.progress-text {
+  font-size: .72rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--gray-mid);
+}
+
+.progress-pips {
+  display: flex;
+  gap: 7px;
+}
+
+.pip {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--gray-light);
+  transition: background .3s;
+}
+.pip.done { background: var(--black); }
+.pip.now  { background: var(--accent); }
+
+.stop-image-box {
+  width: 100%;
+  height: 190px;
+  background: #d8d4cd;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.stop-image-label {
+  font-size: .7rem;
+  color: #9a9590;
+  letter-spacing: .05em;
+  text-align: center;
+  padding: 0 20px;
+}
+
+.stop-image-icon {
+  width: 48px;
+  height: 48px;
+  opacity: .3;
+}
+
+.stop-body {
+  padding: 22px 24px 0;
+}
+
+.stop-gallery-tag {
+  font-size: .68rem;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 6px;
+}
+
+.stop-title {
+  font-family: var(--serif);
+  font-size: 1.35rem;
+  font-weight: normal;
+  margin-bottom: 4px;
+}
+
+.stop-meta {
+  font-size: .8rem;
+  color: var(--gray-mid);
+  margin-bottom: 22px;
+}
+
+.prompt-block { margin-bottom: 22px; }
+
+.prompt-row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 13px;
+}
+
+.prompt-index {
+  font-size: .68rem;
+  color: var(--gray-mid);
+  min-width: 18px;
+  padding-top: 4px;
+  flex-shrink: 0;
+}
+
+.prompt-copy {
+  font-size: .92rem;
+  line-height: 1.65;
+  color: var(--black);
+}
+.prompt-copy.invite { font-style: italic; }
+
+/* ── DRAWING ─────────────────────────────────── */
+.draw-section {
+  padding: 0 24px 16px;
+}
+
+.draw-label {
+  font-size: .68rem;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--gray-mid);
+  margin-bottom: 10px;
+}
+
+.canvas-wrap {
+  position: relative;
+  border: 1px solid var(--gray-light);
+  background: white;
+  touch-action: none;
+  overflow: hidden;
+}
+
+#draw-canvas {
+  display: block;
+  touch-action: none;
+}
+
+.canvas-hint {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #c4c0b8;
+  font-size: .78rem;
+  letter-spacing: .04em;
+  pointer-events: none;
+  transition: opacity .4s;
+}
+
+.orient-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.btn-hold {
+  flex: 1;
+  padding: 20px;
+  background: var(--black);
+  color: var(--white);
+  border: none;
+  font-family: var(--sans);
+  font-size: .82rem;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  -webkit-user-select: none;
+  transition: background .15s, transform .1s;
+  touch-action: none;
+}
+.btn-hold.recording {
+  background: var(--accent);
+  transform: scale(0.98);
+}
+
+.btn-clear {
+  padding: 20px 18px;
+  background: transparent;
+  color: var(--gray-mid);
+  border: 1px solid var(--gray-light);
+  font-family: var(--sans);
+  font-size: .72rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  white-space: nowrap;
+}
+.btn-clear:active { background: var(--gray-light); }
+
+.stop-actions {
+  padding: 14px 24px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.capture-status {
+  font-size: .75rem;
+  color: var(--gray-mid);
+  text-align: center;
+  min-height: 18px;
+}
+
+.btn-outline {
+  display: block;
+  width: 100%;
+  padding: 14px;
+  background: transparent;
+  color: var(--black);
+  border: 1px solid var(--gray-light);
+  font-family: var(--sans);
+  font-size: .78rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: all .2s;
+}
+.btn-outline:active { background: var(--gray-light); }
+.btn-outline.captured {
+  border-color: var(--black);
+  background: var(--gray-light);
+}
+
+/* ── TRANSITION ──────────────────────────────── */
+#transition-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: var(--black);
+  color: var(--white);
+  z-index: 200;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 48px 32px;
+}
+#transition-overlay.on { display: flex; }
+
+.trans-captured {
+  font-size: 9px;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: rgba(248,246,242,.35);
+  margin-bottom: 40px;
+}
+
+.trans-next-label {
+  font-size: 9px;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: rgba(248,246,242,.4);
+  margin-bottom: 12px;
+}
+
+.trans-title {
+  font-family: var(--serif);
+  font-size: 1.5rem;
+  font-weight: normal;
+  margin-bottom: 6px;
+}
+
+.trans-gallery {
+  font-size: .8rem;
+  color: rgba(248,246,242,.45);
+  margin-bottom: 28px;
+}
+
+.trans-reason {
+  font-size: .88rem;
+  line-height: 1.7;
+  color: rgba(248,246,242,.6);
+  max-width: 300px;
+  margin-bottom: 52px;
+  font-style: italic;
+}
+
+/* ── ARTIFACT ────────────────────────────────── */
+#screen-artifact { background: var(--white); }
+
+.artifact-header {
+  padding: 44px 24px 24px;
+  text-align: center;
+  border-bottom: 1px solid var(--gray-light);
+}
+
+.artifact-theme-label {
+  font-size: 9px;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--gray-mid);
+  margin-bottom: 8px;
+}
+
+.artifact-title {
+  font-family: var(--serif);
+  font-size: 1.7rem;
+  font-weight: normal;
+}
+
+.artifact-canvas-area {
+  padding: 24px;
+  flex: 1;
+}
+
+#artifact-canvas {
+  display: block;
+  width: 100%;
+  border: 1px solid var(--gray-light);
+}
+
+.artifact-phrase {
+  text-align: center;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: .9rem;
+  color: var(--gray-mid);
+  padding: 14px 32px;
+  line-height: 1.6;
+}
+
+/* ── UTILITY ─────────────────────────────────── */
+@keyframes pulse-green {
+  0%   { box-shadow: 0 0 0 0 rgba(80,160,80,.4); }
+  70%  { box-shadow: 0 0 0 8px rgba(80,160,80,0); }
+  100% { box-shadow: 0 0 0 0 rgba(80,160,80,0); }
+}
+.pulse { animation: pulse-green .5s ease; }
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════
+     START SCREEN
+════════════════════════════════════════ -->
+<div class="screen active" id="screen-start">
+  <div class="start-rule"></div>
+  <p class="start-eyebrow">The Metropolitan Museum of Art</p>
+  <h1 class="start-title">Met Ritual&nbsp;Paths</h1>
+  <p class="start-description">
+    Choose a path through ritual objects.<br>
+    Each stop asks for a small action.<br>
+    Your gestures accumulate into a trace you can keep.
+  </p>
+  <p class="start-paths-label">Available Paths</p>
+  <button class="btn-path" onclick="showScreen('overview')">Protection</button>
+</div>
+
+<!-- ════════════════════════════════════════
+     PATH OVERVIEW
+════════════════════════════════════════ -->
+<div class="screen" id="screen-overview">
+  <div class="overview-header">
+    <p class="eyebrow">Path</p>
+    <h2 class="screen-title">Protection</h2>
+    <p class="overview-meta">5 objects &nbsp;·&nbsp; 15–20 minutes &nbsp;·&nbsp; Asian Art Collection</p>
+  </div>
+  <div class="path-list" id="path-list">
+    <p class="path-list-label">Your Path</p>
+    <!-- populated by JS -->
+  </div>
+  <div class="screen-footer">
+    <button class="btn-dark" onclick="startPath()">Start Path</button>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     OBJECT STOP SCREEN
+════════════════════════════════════════ -->
+<div class="screen" id="screen-stop">
+  <div class="stop-header">
+    <span class="progress-text" id="progress-text">Stop 1 of 5</span>
+    <div class="progress-pips" id="progress-pips"></div>
+  </div>
+
+  <div class="stop-image-box" id="stop-image-box">
+    <!-- SVG placeholder image -->
+    <svg class="stop-image-icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="4" y="8" width="40" height="32" rx="2" stroke="#9a9590" stroke-width="1.5"/>
+      <circle cx="17" cy="20" r="4" stroke="#9a9590" stroke-width="1.5"/>
+      <path d="M4 34l10-10 8 8 6-6 10 8" stroke="#9a9590" stroke-width="1.5" stroke-linejoin="round"/>
+    </svg>
+    <p class="stop-image-label" id="stop-image-label">Object image placeholder</p>
+  </div>
+
+  <div class="stop-body">
+    <p class="stop-gallery-tag" id="stop-gallery"></p>
+    <h2 class="stop-title" id="stop-title"></h2>
+    <p class="stop-meta" id="stop-meta"></p>
+
+    <div class="prompt-block" id="prompt-block">
+      <!-- populated by JS -->
+    </div>
+  </div>
+
+  <div class="draw-section">
+    <p class="draw-label" id="draw-label">Perform your gesture</p>
+    <div class="canvas-wrap" id="canvas-wrap">
+      <canvas id="draw-canvas"></canvas>
+      <div class="canvas-hint" id="canvas-hint">Hold the button below and move your phone</div>
+    </div>
+    <div class="orient-controls">
+      <button class="btn-hold" id="btn-hold"
+        ontouchstart="holdStart(event)" ontouchend="holdEnd(event)" ontouchcancel="holdEnd(event)"
+        onmousedown="holdStart(event)" onmouseup="holdEnd(event)" onmouseleave="holdEnd(event)">
+        Hold to Draw
+      </button>
+      <button class="btn-clear" onclick="clearCanvas()">Clear</button>
+    </div>
+  </div>
+
+  <div class="stop-actions">
+    <p class="capture-status" id="capture-status"></p>
+    <button class="btn-outline" id="btn-capture" onclick="captureGesture()">Capture Gesture</button>
+    <button class="btn-dark" id="btn-next" onclick="nextStop()">Next Stop →</button>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     TRANSITION OVERLAY
+════════════════════════════════════════ -->
+<div id="transition-overlay">
+  <p class="trans-captured">Gesture Captured</p>
+  <p class="trans-next-label">Next Stop</p>
+  <h3 class="trans-title" id="trans-title"></h3>
+  <p class="trans-gallery" id="trans-gallery"></p>
+  <p class="trans-reason" id="trans-reason"></p>
+  <button class="btn-path" onclick="continueToStop()">Continue →</button>
+</div>
+
+<!-- ════════════════════════════════════════
+     ARTIFACT SCREEN
+════════════════════════════════════════ -->
+<div class="screen" id="screen-artifact">
+  <div class="artifact-header">
+    <p class="artifact-theme-label">Your Protection Trace</p>
+    <h2 class="artifact-title">Five Gestures, One Path</h2>
+  </div>
+  <div class="artifact-canvas-area">
+    <canvas id="artifact-canvas"></canvas>
+  </div>
+  <p class="artifact-phrase">
+    What you warded, carried, enclosed, and sheltered —<br>gathered here.
+  </p>
+  <div class="screen-footer">
+    <button class="btn-dark" onclick="saveArtifact()">Save Image</button>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     JAVASCRIPT
+════════════════════════════════════════ -->
+<script>
+// ─────────────────────────────
+// DATA
+// ─────────────────────────────
+const OBJECTS = [
+  {
+    title: 'Amulet Box',
+    culture: 'Tibet',
+    date: '18th–19th century',
+    gallery: 'Gallery 206',
+    gestureLabel: 'Enclose with both hands',
+    prompt: {
+      see:    'This small container was made to hold sacred objects close to the body. Its enclosure is the protection.',
+      did:    'It may have been worn as a portable shelter — a sealed world carried against the skin, holding what could not be left unguarded.',
+      invite: 'Cup both hands around the space in front of you. Hold them together for a moment, as if containing something fragile.'
+    },
+    transition: {
+      reason: 'This stop shifts protection from containment into active warding through sound and stance.',
+      next: 1
+    }
+  },
+  {
+    title: 'Hand Bell with Guardian Figure',
+    culture: 'Indonesia',
+    date: '14th–16th century',
+    gallery: 'Gallery 247',
+    gestureLabel: 'Raise hand as shield',
+    prompt: {
+      see:    'A guardian figure crowns this bell. Its sound and posture were made to meet what approached from outside.',
+      did:    'It may have been rung at thresholds — marking the edge of safe space, calling attention to what needed warding.',
+      invite: 'Raise your dominant hand slowly in front of you, palm facing outward. Pause at shoulder height, as if holding something back.'
+    },
+    transition: {
+      reason: 'This stop moves from warding outward threats to protecting what passes between people.',
+      next: 2
+    }
+  },
+  {
+    title: 'Letter Box with Amulets',
+    culture: 'Japan',
+    date: 'Edo period, 17th–18th century',
+    gallery: 'Gallery 226',
+    gestureLabel: 'Trace a boundary',
+    prompt: {
+      see:    'This box carried written words and attached them to objects of protection. The space between sender and receiver needed guarding.',
+      did:    'It may have secured messages of importance, wrapping language in protective form so that meaning could travel safely.',
+      invite: 'Use one finger to trace a slow rectangle in the air in front of you — a boundary around something that matters.'
+    },
+    transition: {
+      reason: 'This stop turns from marking boundaries to striking down what crosses them.',
+      next: 3
+    }
+  },
+  {
+    title: 'Demon King Bell Top',
+    culture: 'Indonesia',
+    date: '14th–16th century',
+    gallery: 'Gallery 247',
+    gestureLabel: 'Strike downward',
+    prompt: {
+      see:    'A powerful figure tops this bell — not gentle, but forceful. Protection here is confrontation, not softness.',
+      did:    'It may have been sounded to dispel or command — a strike against what could not be reasoned with.',
+      invite: 'Raise your hand above your head, then bring it down in one deliberate motion, stopping just before your waist.'
+    },
+    transition: {
+      reason: 'The final stop draws protection inward — toward the self, the breath, the chest.',
+      next: 4
+    }
+  },
+  {
+    title: 'Votive Bell',
+    culture: 'China',
+    date: 'Eastern Zhou dynasty, 7th–5th century BCE',
+    gallery: 'Gallery 207',
+    gestureLabel: 'Place hand over heart',
+    prompt: {
+      see:    'This bell was made for ceremony and dedication. Its sound was an act of commitment — an offering toward protection.',
+      did:    'It may have been used to mark vows, to call presence, or to seal intentions between a person and something greater.',
+      invite: 'Place your hand flat against your chest. Stay with that contact for a breath.'
+    },
+    transition: null
+  }
+];
+
+// ─────────────────────────────
+// STATE
+// ─────────────────────────────
+let currentStop  = 0;
+let capturedData = [];   // dataURL per stop
+let hasDrawn     = false;
+let hasCaptured  = false;
+
+// Canvas drawing state
+let canvas, ctx;
+let isDrawing = false;
+let lastX = 0, lastY = 0, lastT = 0;
+
+// ─────────────────────────────
+// SCREEN MANAGEMENT
+// ─────────────────────────────
+function showScreen(name) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + name).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+// ─────────────────────────────
+// OVERVIEW
+// ─────────────────────────────
+function buildOverview() {
+  const list = document.getElementById('path-list');
+  // Keep the label
+  const label = list.querySelector('.path-list-label');
+  list.innerHTML = '';
+  list.appendChild(label);
+
+  OBJECTS.forEach((obj, i) => {
+    const row = document.createElement('div');
+    row.className = 'obj-row';
+    row.innerHTML = `
+      <span class="obj-num">${i + 1}</span>
+      <div class="obj-info">
+        <div class="obj-name">${obj.title}</div>
+        <div class="obj-sub">${obj.culture} &nbsp;·&nbsp; ${obj.date}</div>
+      </div>
+      <div class="obj-gallery">${obj.gallery}</div>
+    `;
+    list.appendChild(row);
+  });
+}
+
+function startPath() {
+  currentStop  = 0;
+  capturedData = [];
+  showScreen('stop');
+  requestAnimationFrame(() => loadStop(0));
+}
+
+// ─────────────────────────────
+// STOP SCREEN
+// ─────────────────────────────
+function loadStop(idx) {
+  const obj = OBJECTS[idx];
+
+  // Progress
+  document.getElementById('progress-text').textContent = `Stop ${idx + 1} of 5`;
+  const pips = document.getElementById('progress-pips');
+  pips.innerHTML = '';
+  for (let i = 0; i < 5; i++) {
+    const d = document.createElement('div');
+    d.className = 'pip' + (i < idx ? ' done' : i === idx ? ' now' : '');
+    pips.appendChild(d);
+  }
+
+  // Image placeholder label
+  document.getElementById('stop-image-label').textContent =
+    `${obj.title} — ${obj.gallery}`;
+
+  // Header info
+  document.getElementById('stop-gallery').textContent = obj.gallery;
+  document.getElementById('stop-title').textContent   = obj.title;
+  document.getElementById('stop-meta').textContent    = `${obj.culture} · ${obj.date}`;
+
+  // Prompt
+  const pb = document.getElementById('prompt-block');
+  pb.innerHTML = `
+    <div class="prompt-row">
+      <span class="prompt-index">1</span>
+      <p class="prompt-copy">${obj.prompt.see}</p>
+    </div>
+    <div class="prompt-row">
+      <span class="prompt-index">2</span>
+      <p class="prompt-copy">${obj.prompt.did}</p>
+    </div>
+    <div class="prompt-row">
+      <span class="prompt-index">3</span>
+      <p class="prompt-copy invite">${obj.prompt.invite}</p>
+    </div>
+  `;
+
+  // Gesture label
+  document.getElementById('draw-label').textContent = `Your gesture: ${obj.gestureLabel}`;
+
+  // Reset draw state
+  holdEnd(null);   // stop any active orientation recording
+  hasDrawn    = false;
+  hasCaptured = false;
+  orientRef   = null;
+  document.getElementById('capture-status').textContent = '';
+  document.getElementById('btn-capture').textContent    = 'Capture Gesture';
+  document.getElementById('btn-capture').className      = 'btn-outline';
+  document.getElementById('btn-next').textContent       = idx === 4 ? 'Complete Path →' : 'Next Stop →';
+  document.getElementById('canvas-hint').style.opacity  = '1';
+  document.getElementById('btn-hold').textContent       = 'Hold to Draw';
+  document.getElementById('btn-hold').classList.remove('recording');
+  document.getElementById('btn-hold').style.display     = '';
+
+  initCanvas();
+}
+
+// ─────────────────────────────
+// CANVAS
+// ─────────────────────────────
+// DeviceOrientationEvent exists on desktop Chrome too but never fires —
+// use touch capability to confirm we're on a real mobile device
+const USE_ORIENTATION = ('DeviceOrientationEvent' in window) &&
+  (navigator.maxTouchPoints > 0 || 'ontouchstart' in window);
+
+// Degrees of tilt to traverse full canvas half-width/height
+const TILT_RANGE = 28;
+
+let orientRef     = null;
+let orientActive  = false;
+let orientGranted = false;
+
+function initCanvas() {
+  canvas = document.getElementById('draw-canvas');
+  const wrap = document.getElementById('canvas-wrap');
+  const w = wrap.offsetWidth;
+  const h = Math.round(w * 0.52);
+
+  canvas.width  = w;
+  canvas.height = h;
+  canvas.style.width  = w + 'px';
+  canvas.style.height = h + 'px';
+
+  // Replace to strip old listeners
+  const fresh = canvas.cloneNode(false);
+  wrap.replaceChild(fresh, canvas);
+  canvas = fresh;
+  ctx    = canvas.getContext('2d');
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0, 0, w, h);
+
+  isDrawing = false;
+
+  // Desktop fallback: mouse draws directly on canvas
+  if (!USE_ORIENTATION) {
+    document.getElementById('canvas-hint').textContent = 'Draw here with your mouse';
+    document.getElementById('btn-hold').style.display = 'none';
+    canvas.addEventListener('mousedown',  onMouseDown);
+    canvas.addEventListener('mousemove',  onMouseMove);
+    canvas.addEventListener('mouseup',    onMouseUp);
+    canvas.addEventListener('mouseleave', onMouseUp);
+  }
+}
+
+function clearCanvas() {
+  if (!ctx) return;
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  hasDrawn    = false;
+  hasCaptured = false;
+  orientRef   = null;
+  document.getElementById('canvas-hint').style.opacity = '1';
+  document.getElementById('capture-status').textContent = '';
+  document.getElementById('btn-capture').textContent    = 'Capture Gesture';
+  document.getElementById('btn-capture').className      = 'btn-outline';
+}
+
+// ─────────────────────────────
+// HOLD BUTTON
+// ─────────────────────────────
+let noOrientTimer = null;
+
+function holdStart(e) {
+  e.preventDefault();
+  if (!USE_ORIENTATION) return; // desktop: mouse on canvas
+
+  const begin = () => {
+    orientActive = true;
+    orientRef    = null;
+    document.getElementById('btn-hold').classList.add('recording');
+    document.getElementById('btn-hold').textContent = 'Drawing…';
+    document.getElementById('capture-status').textContent = 'Move your phone now';
+    window.addEventListener('deviceorientation', onOrient, true);
+
+    // If no orientation event fires within 1.5s, warn the user
+    noOrientTimer = setTimeout(() => {
+      if (!hasDrawn) {
+        document.getElementById('capture-status').textContent =
+          'No motion detected — try on a phone over HTTPS';
+      }
+    }, 1500);
+  };
+
+  if (typeof DeviceOrientationEvent.requestPermission === 'function' && !orientGranted) {
+    // iOS 13+ — must be triggered from user gesture (this touchstart qualifies)
+    DeviceOrientationEvent.requestPermission()
+      .then(state => {
+        if (state === 'granted') { orientGranted = true; begin(); }
+        else { document.getElementById('capture-status').textContent = 'Motion permission denied. Check iOS Settings > Safari > Motion & Orientation.'; }
+      })
+      .catch(() => { document.getElementById('capture-status').textContent = 'Motion permission error.'; });
+  } else {
+    begin();
+  }
+}
+
+function holdEnd(e) {
+  if (e) e.preventDefault();
+  clearTimeout(noOrientTimer);
+  if (!orientActive) return;
+  orientActive = false;
+  window.removeEventListener('deviceorientation', onOrient, true);
+  endStroke();
+  document.getElementById('btn-hold').classList.remove('recording');
+  document.getElementById('btn-hold').textContent = 'Hold to Draw';
+  if (hasDrawn) document.getElementById('capture-status').textContent = '';
+}
+
+function onOrient(e) {
+  if (!orientActive) return;
+
+  const beta  = e.beta  ?? 0;
+  const gamma = e.gamma ?? 0;
+
+  if (!orientRef) {
+    orientRef = { beta, gamma };
+    clearTimeout(noOrientTimer);
+    document.getElementById('capture-status').textContent = '';
+    beginStroke(canvas.width / 2, canvas.height / 2);
+    return;
+  }
+
+  // Map tilt delta to canvas coordinates
+  const dG = gamma - orientRef.gamma;   // left/right → X
+  const dB = beta  - orientRef.beta;    // forward/back → Y
+
+  const cx = canvas.width  / 2;
+  const cy = canvas.height / 2;
+  const x  = Math.max(2, Math.min(canvas.width  - 2, cx + (dG / TILT_RANGE) * cx));
+  const y  = Math.max(2, Math.min(canvas.height - 2, cy + (dB / TILT_RANGE) * cy));
+
+  continueStroke(x, y);
+}
+
+function beginStroke(x, y) {
+  isDrawing = true;
+  lastX = x; lastY = y; lastT = Date.now();
+  hasDrawn = true;
+  document.getElementById('canvas-hint').style.opacity = '0';
+}
+
+function continueStroke(x, y) {
+  if (!isDrawing) return;
+
+  const now   = Date.now();
+  const dt    = Math.max(now - lastT, 1);
+  const dx    = x - lastX, dy = y - lastY;
+  const dist  = Math.sqrt(dx * dx + dy * dy);
+  const speed = dist / dt;
+
+  // Slow → thick (max 14), fast → thin (min 1)
+  const t  = Math.min(speed / 1.8, 1);
+  const lw = 14 - 13 * t;
+
+  const alpha = 0.72 + Math.random() * 0.28;
+  ctx.beginPath();
+  ctx.moveTo(lastX, lastY);
+  ctx.lineTo(x, y);
+  ctx.lineWidth   = lw;
+  ctx.lineCap     = 'round';
+  ctx.lineJoin    = 'round';
+  ctx.strokeStyle = `rgba(18,18,18,${alpha.toFixed(2)})`;
+  ctx.stroke();
+
+  if (Math.random() < 0.25 && lw > 4) {
+    const jx = x + (Math.random() - .5) * 2;
+    const jy = y + (Math.random() - .5) * 2;
+    ctx.beginPath();
+    ctx.moveTo(lastX, lastY);
+    ctx.lineTo(jx, jy);
+    ctx.lineWidth   = lw * 0.35;
+    ctx.strokeStyle = `rgba(18,18,18,${(alpha * 0.4).toFixed(2)})`;
+    ctx.stroke();
+  }
+
+  lastX = x; lastY = y; lastT = now;
+}
+
+function endStroke() { isDrawing = false; }
+
+// Desktop mouse fallback
+function onMouseDown(e) { const p = canvasPos(e); beginStroke(p.x, p.y); }
+function onMouseMove(e) { const p = canvasPos(e); continueStroke(p.x, p.y); }
+function onMouseUp()    { endStroke(); }
+
+function canvasPos(e) {
+  const r  = canvas.getBoundingClientRect();
+  return {
+    x: (e.clientX - r.left) * (canvas.width  / r.width),
+    y: (e.clientY - r.top)  * (canvas.height / r.height)
+  };
+}
+
+// ─────────────────────────────
+// CAPTURE
+// ─────────────────────────────
+function captureGesture() {
+  if (!hasDrawn) {
+    document.getElementById('capture-status').textContent = 'Draw your gesture first.';
+    return;
+  }
+
+  capturedData[currentStop] = canvas.toDataURL('image/png');
+  hasCaptured = true;
+
+  document.getElementById('capture-status').textContent = 'Gesture captured.';
+  const btn = document.getElementById('btn-capture');
+  btn.textContent = '✓ Captured';
+  btn.className   = 'btn-outline captured';
+
+  const wrap = document.getElementById('canvas-wrap');
+  wrap.classList.add('pulse');
+  setTimeout(() => wrap.classList.remove('pulse'), 600);
+}
+
+// ─────────────────────────────
+// NAVIGATION
+// ─────────────────────────────
+function nextStop() {
+  // Auto-capture whatever is on canvas
+  if (!hasCaptured) {
+    capturedData[currentStop] = canvas.toDataURL('image/png');
+  }
+
+  if (currentStop === 4) {
+    showScreen('artifact');
+    requestAnimationFrame(() => buildArtifact());
+    return;
+  }
+
+  // Show transition overlay
+  const next = OBJECTS[currentStop + 1];
+  const tr   = OBJECTS[currentStop].transition;
+
+  document.getElementById('trans-title').textContent   = next.title;
+  document.getElementById('trans-gallery').textContent = `${next.gallery} · ${next.culture}`;
+  document.getElementById('trans-reason').textContent  = tr ? tr.reason : '';
+
+  document.getElementById('transition-overlay').classList.add('on');
+}
+
+function continueToStop() {
+  document.getElementById('transition-overlay').classList.remove('on');
+  currentStop++;
+  loadStop(currentStop);
+  window.scrollTo(0, 0);
+}
+
+// ─────────────────────────────
+// ARTIFACT
+// ─────────────────────────────
+function buildArtifact() {
+  const ac   = document.getElementById('artifact-canvas');
+  const area = ac.parentElement;
+  const pw   = area.offsetWidth - 48;   // subtract padding
+  const ph   = Math.round(pw * 1.35);   // portrait
+
+  ac.width  = pw;
+  ac.height = ph;
+  ac.style.width  = pw + 'px';
+  ac.style.height = ph + 'px';
+
+  const ax = ac.getContext('2d');
+
+  // Warm off-white background
+  ax.fillStyle = '#f5f2ec';
+  ax.fillRect(0, 0, pw, ph);
+
+  const strokeH = ph - 90;
+  const opacities = [0.50, 0.62, 0.72, 0.66, 0.82];
+  // Subtle hue shifts per layer (all near-black, slight warm/cool)
+  const tints = [
+    'rgba(20,18,18,',
+    'rgba(18,20,22,',
+    'rgba(22,18,16,',
+    'rgba(16,20,20,',
+    'rgba(20,20,18,'
+  ];
+  const offsets = [[-6,-4],[3,5],[-2,2],[4,-3],[0,0]];
+
+  if (capturedData.length === 0) {
+    finishArtifact(ax, pw, ph, strokeH);
+    return;
+  }
+
+  let loaded = 0;
+  capturedData.forEach((url, i) => {
+    const img = new Image();
+    img.onload = () => {
+      ax.save();
+      ax.globalAlpha = 0.85;
+      ax.globalCompositeOperation = 'multiply';
+
+      const ox = offsets[i][0], oy = offsets[i][1];
+      ax.drawImage(img, ox, oy, pw, strokeH);
+      ax.restore();
+
+      loaded++;
+      if (loaded === capturedData.length) {
+        finishArtifact(ax, pw, ph, strokeH);
+      }
+    };
+    img.onerror = () => {
+      loaded++;
+      if (loaded === capturedData.length) finishArtifact(ax, pw, ph, strokeH);
+    };
+    img.src = url;
+  });
+}
+
+function finishArtifact(ax, w, h, strokeH) {
+  // Separator
+  ax.strokeStyle = 'rgba(26,26,26,0.15)';
+  ax.lineWidth   = 0.5;
+  ax.beginPath();
+  ax.moveTo(28, strokeH + 12);
+  ax.lineTo(w - 28, strokeH + 12);
+  ax.stroke();
+
+  // Theme label
+  ax.textAlign    = 'center';
+  ax.fillStyle    = 'rgba(120,112,104,0.9)';
+  ax.font         = '10px -apple-system, sans-serif';
+  ax.fillText('PROTECTION  ·  THE METROPOLITAN MUSEUM OF ART', w / 2, strokeH + 30);
+
+  // Title
+  ax.fillStyle = '#1a1a1a';
+  ax.font      = 'italic 24px Georgia, serif';
+  ax.fillText('Five Gestures, One Path', w / 2, strokeH + 58);
+
+  // Date
+  ax.fillStyle = 'rgba(120,112,104,0.7)';
+  ax.font      = '10px -apple-system, sans-serif';
+  const dateStr = new Date().toLocaleDateString('en-US', {
+    year: 'numeric', month: 'long', day: 'numeric'
+  });
+  ax.fillText(dateStr, w / 2, strokeH + 76);
+}
+
+// ─────────────────────────────
+// SAVE
+// ─────────────────────────────
+function saveArtifact() {
+  const ac   = document.getElementById('artifact-canvas');
+  const link = document.createElement('a');
+  link.download = 'met-ritual-paths-protection.png';
+  link.href     = ac.toDataURL('image/png');
+  link.click();
+}
+
+// ─────────────────────────────
+// INIT
+// ─────────────────────────────
+buildOverview();
+
+window.addEventListener('resize', () => {
+  if (document.getElementById('screen-stop').classList.contains('active')) {
+    const saved = hasCaptured ? capturedData[currentStop] : null;
+    initCanvas();
+    if (saved) {
+      const img = new Image();
+      img.onload = () => {
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      };
+      img.src = saved;
+    }
+  }
+});
+</script>
+</body>
+</html>
