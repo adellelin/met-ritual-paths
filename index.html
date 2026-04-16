@@ -482,39 +482,8 @@ html, body {
   line-height: 1.7;
   color: rgba(248,246,242,.6);
   max-width: 300px;
-  margin-bottom: 28px;
+  margin-bottom: 52px;
   font-style: italic;
-}
-
-/* ── GALLERY MAP ─────────────────────────────── */
-.trans-map-wrap {
-  width: 100%;
-  max-width: 300px;
-  margin-bottom: 36px;
-}
-.trans-map-eyebrow {
-  font-size: 8px;
-  letter-spacing: .2em;
-  text-transform: uppercase;
-  color: rgba(248,246,242,.28);
-  margin-bottom: 10px;
-  text-align: left;
-}
-.trans-map-walk {
-  font-size: .72rem;
-  color: rgba(248,246,242,.38);
-  margin-top: 9px;
-  letter-spacing: .01em;
-  text-align: left;
-}
-#gallery-map { display: block; width: 100%; height: auto; }
-
-@keyframes dash-flow {
-  to { stroke-dashoffset: -20; }
-}
-@keyframes origin-pulse {
-  0%, 100% { opacity: 1;  r: 5; }
-  50%       { opacity: .5; r: 7; }
 }
 
 /* ── ARTIFACT ────────────────────────────────── */
@@ -663,13 +632,6 @@ html, body {
   <h3 class="trans-title" id="trans-title"></h3>
   <p class="trans-gallery" id="trans-gallery"></p>
   <p class="trans-reason" id="trans-reason"></p>
-
-  <div class="trans-map-wrap">
-    <p class="trans-map-eyebrow">Getting there</p>
-    <svg id="gallery-map" viewBox="0 0 300 160" xmlns="http://www.w3.org/2000/svg"></svg>
-    <p class="trans-map-walk" id="trans-map-walk"></p>
-  </div>
-
   <button class="btn-path" onclick="continueToStop()">Continue →</button>
 </div>
 
@@ -778,114 +740,6 @@ const OBJECTS = [
     transition: null
   }
 ];
-
-// ─────────────────────────────
-// GALLERY MAP
-// ─────────────────────────────
-// Approximate positions within the Met 2nd-floor Asian galleries.
-// SVG viewBox is 0 0 300 160.
-// 206/207 = Chinese bronzes (NW cluster); 226 = Japanese (centre); 247 = SE Asian (SE).
-const GALLERY_NODES = {
-  'Gallery 206': { x: 44,  y: 32,  label: '206' },
-  'Gallery 207': { x: 44,  y: 72,  label: '207' },
-  'Gallery 226': { x: 158, y: 96,  label: '226' },
-  'Gallery 247': { x: 252, y: 130, label: '247' },
-};
-
-// Shared corridor spine (y ≈ 110) that the route line follows between clusters
-const CORRIDOR_Y = 110;
-
-const WALK_HINTS = [
-  'Head south through the Japanese galleries — Gallery 247 is at the far end.',
-  'Walk back north through Gallery 226. It\'s two rooms up on your left.',
-  'Return south — Gallery 247 is at the end of the same corridor.',
-  'Head north through Chinese galleries to Gallery 207.',
-];
-
-function buildGalleryMap(fromKey, toKey, stopIndex) {
-  const svg = document.getElementById('gallery-map');
-  svg.innerHTML = '';
-  const ns = 'http://www.w3.org/2000/svg';
-
-  const mk = (tag, attrs, style) => {
-    const el = document.createElementNS(ns, tag);
-    Object.entries(attrs).forEach(([k, v]) => el.setAttribute(k, v));
-    if (style) el.style.cssText = style;
-    return el;
-  };
-
-  // Floor background
-  svg.appendChild(mk('rect', { x: 0, y: 0, width: 300, height: 160, fill: 'rgba(255,255,255,.04)', rx: 4 }));
-
-  // Corridor spine
-  svg.appendChild(mk('line', {
-    x1: 30, y1: CORRIDOR_Y, x2: 270, y2: CORRIDOR_Y,
-    stroke: 'rgba(255,255,255,.09)', 'stroke-width': 8, 'stroke-linecap': 'round',
-  }));
-
-  // Vertical connectors from nodes to corridor
-  Object.values(GALLERY_NODES).forEach(n => {
-    svg.appendChild(mk('line', {
-      x1: n.x, y1: n.y + 10, x2: n.x, y2: CORRIDOR_Y,
-      stroke: 'rgba(255,255,255,.07)', 'stroke-width': 2, 'stroke-dasharray': '3 3',
-    }));
-  });
-
-  // All gallery rooms
-  Object.entries(GALLERY_NODES).forEach(([key, n]) => {
-    const isCurrent = key === fromKey;
-    const isDest    = key === toKey;
-    const roomFill  = isCurrent ? 'rgba(122,53,38,.35)' : isDest ? 'rgba(248,246,242,.12)' : 'rgba(255,255,255,.06)';
-    const stroke    = isCurrent ? '#7a3526' : isDest ? 'rgba(248,246,242,.7)' : 'rgba(255,255,255,.2)';
-    const sw        = isCurrent || isDest ? 1.5 : 1;
-
-    svg.appendChild(mk('rect', { x: n.x - 15, y: n.y - 11, width: 30, height: 22, rx: 3, fill: roomFill, stroke, 'stroke-width': sw }));
-
-    const lbl = mk('text', {
-      x: n.x, y: n.y + 4,
-      'text-anchor': 'middle',
-      fill: isCurrent || isDest ? 'rgba(248,246,242,.9)' : 'rgba(255,255,255,.3)',
-      'font-size': 8, 'font-family': '-apple-system,sans-serif', 'letter-spacing': '.05em',
-    });
-    lbl.textContent = n.label;
-    svg.appendChild(lbl);
-  });
-
-  // Route line from → to (travels via corridor)
-  const from = GALLERY_NODES[fromKey];
-  const to   = GALLERY_NODES[toKey];
-  if (from && to) {
-    const pts = `${from.x},${from.y + 11} ${from.x},${CORRIDOR_Y} ${to.x},${CORRIDOR_Y} ${to.x},${to.y + 11}`;
-
-    // Glow
-    svg.appendChild(mk('polyline', { points: pts, fill: 'none', stroke: 'rgba(122,53,38,.35)', 'stroke-width': 8, 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }));
-
-    // Animated dashes
-    const dash = mk('polyline', {
-      points: pts, fill: 'none',
-      stroke: '#c0614e', 'stroke-width': 2,
-      'stroke-linecap': 'round', 'stroke-linejoin': 'round',
-      'stroke-dasharray': '6 4',
-    }, 'animation: dash-flow .65s linear infinite;');
-    svg.appendChild(dash);
-
-    // Arrowhead pointing into destination room
-    const arrY = to.y - 11; // top edge of destination room
-    const arr  = mk('polygon', {
-      points: `${to.x},${arrY} ${to.x - 5},${arrY + 8} ${to.x + 5},${arrY + 8}`,
-      fill: '#c0614e',
-    });
-    svg.appendChild(arr);
-
-    // Pulsing origin dot
-    const dot = mk('circle', {
-      cx: from.x, cy: from.y, r: 5, fill: '#7a3526',
-    }, 'animation: origin-pulse 1.4s ease-in-out infinite; transform-box: fill-box; transform-origin: center;');
-    svg.appendChild(dot);
-  }
-
-  document.getElementById('trans-map-walk').textContent = WALK_HINTS[stopIndex] || '';
-}
 
 // ─────────────────────────────
 // STATE
@@ -1009,7 +863,7 @@ const USE_ORIENTATION = ('DeviceOrientationEvent' in window) &&
   (navigator.maxTouchPoints > 0 || 'ontouchstart' in window);
 
 // Degrees of tilt to traverse full canvas half-width/height
-const TILT_RANGE = 55;
+const TILT_RANGE = 28;
 
 let orientRef     = null;
 let orientActive  = false;
@@ -1131,6 +985,7 @@ function onOrient(e) {
 
   if (!orientRef) {
     orientRef = { beta, gamma };
+    clearTimeout(noOrientTimer);
     document.getElementById('capture-status').textContent = '';
     beginStroke(canvas.width / 2, canvas.height / 2);
     return;
@@ -1142,33 +997,17 @@ function onOrient(e) {
 
   const cx = canvas.width  / 2;
   const cy = canvas.height / 2;
-  const x  = cx + (dG / TILT_RANGE) * cx;
-  const y  = cy + (dB / TILT_RANGE) * cy;
-
-  // Stop drawing at the boundary rather than pooling ink at the edge
-  const margin = 4;
-  if (x < margin || x > canvas.width - margin || y < margin || y > canvas.height - margin) {
-    endStroke();
-    return;
-  }
+  const x  = Math.max(2, Math.min(canvas.width  - 2, cx + (dG / TILT_RANGE) * cx));
+  const y  = Math.max(2, Math.min(canvas.height - 2, cy + (dB / TILT_RANGE) * cy));
 
   continueStroke(x, y);
 }
 
-let prevLW = 1;
-
 function beginStroke(x, y) {
   isDrawing = true;
   lastX = x; lastY = y; lastT = Date.now();
-  prevLW = 18;
   hasDrawn = true;
   document.getElementById('canvas-hint').style.opacity = '0';
-
-  // Ink pool dot at stroke start
-  ctx.beginPath();
-  ctx.arc(x, y, 9, 0, Math.PI * 2);
-  ctx.fillStyle = 'rgba(18,18,18,0.85)';
-  ctx.fill();
 }
 
 function continueStroke(x, y) {
@@ -1180,16 +1019,11 @@ function continueStroke(x, y) {
   const dist  = Math.sqrt(dx * dx + dy * dy);
   const speed = dist / dt;
 
-  // Curved speed response: thick blobs when slow, hair-thin when fast
-  // Power curve makes the thick→thin transition fast and dramatic
-  const t      = Math.min(speed / 1.4, 1);
-  const target = 22 - 21.7 * Math.pow(t, 0.5);  // 22px → 0.3px
+  // Slow → thick (max 14), fast → thin (min 1)
+  const t  = Math.min(speed / 1.8, 1);
+  const lw = 14 - 13 * t;
 
-  // Smooth interpolation so line weight transitions feel like real ink
-  prevLW = prevLW * 0.65 + target * 0.35;
-  const lw = Math.max(0.3, prevLW);
-
-  const alpha = 0.78 + Math.random() * 0.22;
+  const alpha = 0.72 + Math.random() * 0.28;
   ctx.beginPath();
   ctx.moveTo(lastX, lastY);
   ctx.lineTo(x, y);
@@ -1199,15 +1033,14 @@ function continueStroke(x, y) {
   ctx.strokeStyle = `rgba(18,18,18,${alpha.toFixed(2)})`;
   ctx.stroke();
 
-  // Ink texture: occasional faint ghost stroke alongside thick lines
-  if (Math.random() < 0.3 && lw > 5) {
-    const jx = x + (Math.random() - .5) * 3;
-    const jy = y + (Math.random() - .5) * 3;
+  if (Math.random() < 0.25 && lw > 4) {
+    const jx = x + (Math.random() - .5) * 2;
+    const jy = y + (Math.random() - .5) * 2;
     ctx.beginPath();
     ctx.moveTo(lastX, lastY);
     ctx.lineTo(jx, jy);
-    ctx.lineWidth   = lw * 0.3;
-    ctx.strokeStyle = `rgba(18,18,18,${(alpha * 0.35).toFixed(2)})`;
+    ctx.lineWidth   = lw * 0.35;
+    ctx.strokeStyle = `rgba(18,18,18,${(alpha * 0.4).toFixed(2)})`;
     ctx.stroke();
   }
 
@@ -1273,10 +1106,6 @@ function nextStop() {
   document.getElementById('trans-title').textContent   = next.title;
   document.getElementById('trans-gallery').textContent = `${next.gallery} · ${next.culture}`;
   document.getElementById('trans-reason').textContent  = tr ? tr.reason : '';
-
-  const fromGallery = OBJECTS[currentStop].gallery;
-  const toGallery   = next.gallery;
-  buildGalleryMap(fromGallery, toGallery, currentStop);
 
   document.getElementById('transition-overlay').classList.add('on');
 }
