@@ -611,11 +611,7 @@ html, body {
       <div class="canvas-hint" id="canvas-hint">Hold the button below and move your phone</div>
     </div>
     <div class="orient-controls">
-      <button class="btn-hold" id="btn-hold"
-        ontouchstart="holdStart(event)" ontouchend="holdEnd(event)" ontouchcancel="holdEnd(event)"
-        onmousedown="holdStart(event)" onmouseup="holdEnd(event)" onmouseleave="holdEnd(event)">
-        Hold to Draw
-      </button>
+      <button class="btn-hold" id="btn-hold">Hold to Draw</button>
       <button class="btn-clear" onclick="clearCanvas()">Clear</button>
     </div>
   </div>
@@ -854,9 +850,6 @@ function loadStop(idx) {
   document.getElementById('btn-capture').className      = 'btn-outline';
   document.getElementById('btn-next').textContent       = idx === 4 ? 'Complete Path →' : 'Next Stop →';
   document.getElementById('canvas-hint').style.opacity  = '1';
-  document.getElementById('btn-hold').textContent       = 'Hold to Draw';
-  document.getElementById('btn-hold').classList.remove('recording');
-  document.getElementById('btn-hold').style.display     = '';
 
   initCanvas();
 }
@@ -900,12 +893,13 @@ function initCanvas() {
   // Desktop fallback: mouse draws directly on canvas
   if (!USE_ORIENTATION) {
     document.getElementById('canvas-hint').textContent = 'Draw here with your mouse';
-    document.getElementById('btn-hold').style.display = 'none';
     canvas.addEventListener('mousedown',  onMouseDown);
     canvas.addEventListener('mousemove',  onMouseMove);
     canvas.addEventListener('mouseup',    onMouseUp);
     canvas.addEventListener('mouseleave', onMouseUp);
   }
+
+  setupHoldButton();
 }
 
 function clearCanvas() {
@@ -926,38 +920,68 @@ function clearCanvas() {
 // ─────────────────────────────
 let noOrientTimer = null;
 
-function holdStart(e) {
-  e.preventDefault();
-  if (!USE_ORIENTATION) return; // desktop: mouse on canvas
+// Wire up the hold button — called on each stop load
+function setupHoldButton() {
+  const btn = document.getElementById('btn-hold');
 
-  const begin = () => {
-    orientActive = true;
-    orientRef    = null;
-    document.getElementById('btn-hold').classList.add('recording');
-    document.getElementById('btn-hold').textContent = 'Drawing…';
-    document.getElementById('capture-status').textContent = 'Move your phone now';
-    window.addEventListener('deviceorientation', onOrient, true);
+  // Strip all previous listeners by cloning
+  const fresh = btn.cloneNode(true);
+  btn.parentNode.replaceChild(fresh, btn);
+  const b = document.getElementById('btn-hold');
 
-    // If no orientation event fires within 1.5s, warn the user
-    noOrientTimer = setTimeout(() => {
-      if (!hasDrawn) {
-        document.getElementById('capture-status').textContent =
-          'No motion detected — try on a phone over HTTPS';
-      }
-    }, 1500);
-  };
+  if (!USE_ORIENTATION) {
+    b.style.display = 'none';
+    return;
+  }
 
   if (typeof DeviceOrientationEvent.requestPermission === 'function' && !orientGranted) {
-    // iOS 13+ — must be triggered from user gesture (this touchstart qualifies)
-    DeviceOrientationEvent.requestPermission()
-      .then(state => {
-        if (state === 'granted') { orientGranted = true; begin(); }
-        else { document.getElementById('capture-status').textContent = 'Motion permission denied. Check iOS Settings > Safari > Motion & Orientation.'; }
-      })
-      .catch(() => { document.getElementById('capture-status').textContent = 'Motion permission error.'; });
+    // iOS: needs a click (not touchstart) to trigger permission dialog
+    b.textContent = 'Tap to Enable Motion';
+    b.addEventListener('click', function onPermClick() {
+      DeviceOrientationEvent.requestPermission()
+        .then(state => {
+          if (state === 'granted') {
+            orientGranted = true;
+            document.getElementById('capture-status').textContent = 'Motion enabled — hold to draw';
+            setupHoldButton(); // re-wire as hold button
+          } else {
+            document.getElementById('capture-status').textContent =
+              'Permission denied — check iOS Settings › Safari › Motion & Orientation';
+          }
+        })
+        .catch(() => {
+          document.getElementById('capture-status').textContent = 'Permission error.';
+        });
+    });
   } else {
-    begin();
+    // Permission already granted (or Android) — wire touchstart/touchend
+    b.textContent = 'Hold to Draw';
+    b.addEventListener('touchstart', holdStart, { passive: false });
+    b.addEventListener('touchend',   holdEnd);
+    b.addEventListener('touchcancel', holdEnd);
+    b.addEventListener('mousedown',  holdStart);
+    b.addEventListener('mouseup',    holdEnd);
+    b.addEventListener('mouseleave', holdEnd);
   }
+}
+
+function holdStart(e) {
+  e.preventDefault();
+  if (orientActive) return;
+  orientActive = true;
+  orientRef    = null;
+  const b = document.getElementById('btn-hold');
+  b.classList.add('recording');
+  b.textContent = 'Drawing…';
+  document.getElementById('capture-status').textContent = 'Move your phone now';
+  window.addEventListener('deviceorientation', onOrient, true);
+
+  noOrientTimer = setTimeout(() => {
+    if (!hasDrawn) {
+      document.getElementById('capture-status').textContent =
+        'No motion detected — make sure site is open over HTTPS';
+    }
+  }, 1500);
 }
 
 function holdEnd(e) {
@@ -967,8 +991,9 @@ function holdEnd(e) {
   orientActive = false;
   window.removeEventListener('deviceorientation', onOrient, true);
   endStroke();
-  document.getElementById('btn-hold').classList.remove('recording');
-  document.getElementById('btn-hold').textContent = 'Hold to Draw';
+  const b = document.getElementById('btn-hold');
+  b.classList.remove('recording');
+  b.textContent = 'Hold to Draw';
   if (hasDrawn) document.getElementById('capture-status').textContent = '';
 }
 
