@@ -863,7 +863,7 @@ const USE_ORIENTATION = ('DeviceOrientationEvent' in window) &&
   (navigator.maxTouchPoints > 0 || 'ontouchstart' in window);
 
 // Degrees of tilt to traverse full canvas half-width/height
-const TILT_RANGE = 28;
+const TILT_RANGE = 55;
 
 let orientRef     = null;
 let orientActive  = false;
@@ -890,14 +890,11 @@ function initCanvas() {
 
   isDrawing = false;
 
-  // Desktop fallback: mouse draws directly on canvas
-  if (!USE_ORIENTATION) {
-    document.getElementById('canvas-hint').textContent = 'Draw here with your mouse';
-    canvas.addEventListener('mousedown',  onMouseDown);
-    canvas.addEventListener('mousemove',  onMouseMove);
-    canvas.addEventListener('mouseup',    onMouseUp);
-    canvas.addEventListener('mouseleave', onMouseUp);
-  }
+  // Desktop mouse fallback
+  canvas.addEventListener('mousedown',  onMouseDown);
+  canvas.addEventListener('mousemove',  onMouseMove);
+  canvas.addEventListener('mouseup',    onMouseUp);
+  canvas.addEventListener('mouseleave', onMouseUp);
 
   setupHoldButton();
 }
