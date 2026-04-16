@@ -8,11 +8,13 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
 :root {
-  --black: #1a1a1a;
-  --white: #f8f6f2;
-  --gray-light: #e2dfd9;
-  --gray-mid: #9a9590;
-  --accent: #7a3526;
+  --black: #2B2E34;
+  --white: #E7D9FF;
+  --gray-light: #B8AACF;
+  --gray-mid: #9B8FAF;
+  --accent: #5A2D5C;
+  --orchid: #D46ACF;
+  --teal: #00B7B3;
   --serif: Georgia, 'Times New Roman', serif;
   --sans: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
 }
@@ -53,7 +55,7 @@ html, body {
   font-size: 9px;
   letter-spacing: .22em;
   text-transform: uppercase;
-  color: rgba(248,246,242,.3);
+  color: rgba(231,217,255,.3);
   margin-bottom: 10px;
 }
 
@@ -82,7 +84,7 @@ html, body {
   padding: 0 24px;
   border: none;
   border-radius: 4px;
-  background: rgba(255,255,255,.06);
+  background: rgba(231,217,255,.06);
   color: var(--white);
   font-family: var(--serif);
   font-size: 1.8rem;
@@ -97,15 +99,15 @@ html, body {
   min-height: 72px;
 }
 .theme-btn.active { background: var(--accent); }
-.theme-btn.inactive { color: rgba(248,246,242,.3); cursor: default; }
-.theme-btn.active:active { background: #8f3e2c; }
+.theme-btn.inactive { color: rgba(231,217,255,.3); cursor: default; }
+.theme-btn.active:active { background: #3D1E3E; }
 .theme-btn .theme-arrow { font-size: 1.2rem; opacity: .5; flex-shrink: 0; }
 .theme-btn .theme-tag {
   font-family: var(--sans);
   font-size: 8px;
   letter-spacing: .18em;
   text-transform: uppercase;
-  color: rgba(248,246,242,.4);
+  color: rgba(231,217,255,.4);
   position: absolute;
   bottom: 12px;
   left: 24px;
@@ -264,12 +266,12 @@ html, body {
   transition: background .3s;
 }
 .pip.done { background: var(--black); }
-.pip.now  { background: var(--accent); }
+.pip.now  { background: var(--teal); }
 
 .stop-image-box {
   width: 100%;
   height: 190px;
-  background: #d8d4cd;
+  background: #1E2026;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -280,7 +282,7 @@ html, body {
 
 .stop-image-label {
   font-size: .7rem;
-  color: #9a9590;
+  color: var(--gray-mid);
   letter-spacing: .05em;
   text-align: center;
   padding: 0 20px;
@@ -374,7 +376,7 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #c4c0b8;
+  color: var(--gray-mid);
   font-size: .78rem;
   letter-spacing: .04em;
   pointer-events: none;
@@ -480,7 +482,7 @@ html, body {
   font-size: 9px;
   letter-spacing: .2em;
   text-transform: uppercase;
-  color: rgba(248,246,242,.35);
+  color: rgba(231,217,255,.35);
   margin-bottom: 40px;
 }
 
@@ -488,7 +490,7 @@ html, body {
   font-size: 9px;
   letter-spacing: .2em;
   text-transform: uppercase;
-  color: rgba(248,246,242,.4);
+  color: rgba(231,217,255,.4);
   margin-bottom: 12px;
 }
 
@@ -501,14 +503,14 @@ html, body {
 
 .trans-gallery {
   font-size: .8rem;
-  color: rgba(248,246,242,.45);
+  color: rgba(231,217,255,.45);
   margin-bottom: 28px;
 }
 
 .trans-reason {
   font-size: .88rem;
   line-height: 1.7;
-  color: rgba(248,246,242,.6);
+  color: rgba(231,217,255,.6);
   max-width: 300px;
   margin-bottom: 28px;
   font-style: italic;
@@ -524,13 +526,13 @@ html, body {
   font-size: 8px;
   letter-spacing: .2em;
   text-transform: uppercase;
-  color: rgba(248,246,242,.28);
+  color: rgba(231,217,255,.28);
   margin-bottom: 10px;
   text-align: left;
 }
 .trans-map-walk {
   font-size: .72rem;
-  color: rgba(248,246,242,.38);
+  color: rgba(231,217,255,.38);
   margin-top: 9px;
   letter-spacing: .01em;
   text-align: left;
@@ -591,9 +593,9 @@ html, body {
 
 /* ── UTILITY ─────────────────────────────────── */
 @keyframes pulse-green {
-  0%   { box-shadow: 0 0 0 0 rgba(80,160,80,.4); }
-  70%  { box-shadow: 0 0 0 8px rgba(80,160,80,0); }
-  100% { box-shadow: 0 0 0 0 rgba(80,160,80,0); }
+  0%   { box-shadow: 0 0 0 0 rgba(0,183,179,.4); }
+  70%  { box-shadow: 0 0 0 8px rgba(0,183,179,0); }
+  100% { box-shadow: 0 0 0 0 rgba(0,183,179,0); }
 }
 .pulse { animation: pulse-green .5s ease; }
 </style>
@@ -826,19 +828,20 @@ const OBJECTS = [
 // GALLERY MAP
 // ─────────────────────────────
 const GALLERY_NODES = {
-  'Gallery 206': { x: 44,  y: 32,  label: '206' },
-  'Gallery 207': { x: 44,  y: 72,  label: '207' },
-  'Gallery 226': { x: 158, y: 96,  label: '226' },
-  'Gallery 247': { x: 252, y: 130, label: '247' },
+  'Gallery 236': { x: 44,  y: 38,  label: '236' },
+  'Gallery 237': { x: 120, y: 38,  label: '237' },
+  'Gallery 242': { x: 120, y: 100, label: '242' },
+  'Gallery 247': { x: 200, y: 100, label: '247' },
+  'Gallery 253': { x: 260, y: 56,  label: '253' },
 };
 
 const CORRIDOR_Y = 110;
 
 const WALK_HINTS = [
-  'Head south through the Japanese galleries — Gallery 247 is at the far end.',
-  'Walk back north through Gallery 226. It\'s two rooms up on your left.',
-  'Return south — Gallery 247 is at the end of the same corridor.',
-  'Head north through Chinese galleries to Gallery 207.',
+  'Continue east — Gallery 237 is the next room in the South Asian galleries.',
+  'Head south through the connecting passage to Gallery 242.',
+  'Walk east through the Southeast Asian galleries to Gallery 247.',
+  'Head northeast through the corridor to Gallery 253 in the Himalayan galleries.',
 ];
 
 function buildGalleryMap(fromKey, toKey, stopIndex) {
@@ -853,25 +856,25 @@ function buildGalleryMap(fromKey, toKey, stopIndex) {
     return el;
   };
 
-  svg.appendChild(mk('rect', { x: 0, y: 0, width: 300, height: 160, fill: 'rgba(255,255,255,.04)', rx: 4 }));
+  svg.appendChild(mk('rect', { x: 0, y: 0, width: 300, height: 160, fill: 'rgba(231,217,255,.04)', rx: 4 }));
 
   svg.appendChild(mk('line', {
     x1: 30, y1: CORRIDOR_Y, x2: 270, y2: CORRIDOR_Y,
-    stroke: 'rgba(255,255,255,.09)', 'stroke-width': 8, 'stroke-linecap': 'round',
+    stroke: 'rgba(231,217,255,.09)', 'stroke-width': 8, 'stroke-linecap': 'round',
   }));
 
   Object.values(GALLERY_NODES).forEach(n => {
     svg.appendChild(mk('line', {
       x1: n.x, y1: n.y + 10, x2: n.x, y2: CORRIDOR_Y,
-      stroke: 'rgba(255,255,255,.07)', 'stroke-width': 2, 'stroke-dasharray': '3 3',
+      stroke: 'rgba(231,217,255,.07)', 'stroke-width': 2, 'stroke-dasharray': '3 3',
     }));
   });
 
   Object.entries(GALLERY_NODES).forEach(([key, n]) => {
     const isCurrent = key === fromKey;
     const isDest    = key === toKey;
-    const roomFill  = isCurrent ? 'rgba(122,53,38,.35)' : isDest ? 'rgba(248,246,242,.12)' : 'rgba(255,255,255,.06)';
-    const stroke    = isCurrent ? '#7a3526' : isDest ? 'rgba(248,246,242,.7)' : 'rgba(255,255,255,.2)';
+    const roomFill  = isCurrent ? 'rgba(90,45,92,.35)' : isDest ? 'rgba(231,217,255,.12)' : 'rgba(231,217,255,.06)';
+    const stroke    = isCurrent ? '#5A2D5C' : isDest ? 'rgba(231,217,255,.7)' : 'rgba(231,217,255,.2)';
     const sw        = isCurrent || isDest ? 1.5 : 1;
 
     svg.appendChild(mk('rect', { x: n.x - 15, y: n.y - 11, width: 30, height: 22, rx: 3, fill: roomFill, stroke, 'stroke-width': sw }));
@@ -879,7 +882,7 @@ function buildGalleryMap(fromKey, toKey, stopIndex) {
     const lbl = mk('text', {
       x: n.x, y: n.y + 4,
       'text-anchor': 'middle',
-      fill: isCurrent || isDest ? 'rgba(248,246,242,.9)' : 'rgba(255,255,255,.3)',
+      fill: isCurrent || isDest ? 'rgba(231,217,255,.9)' : 'rgba(231,217,255,.3)',
       'font-size': 8, 'font-family': '-apple-system,sans-serif', 'letter-spacing': '.05em',
     });
     lbl.textContent = n.label;
@@ -891,11 +894,11 @@ function buildGalleryMap(fromKey, toKey, stopIndex) {
   if (from && to) {
     const pts = `${from.x},${from.y + 11} ${from.x},${CORRIDOR_Y} ${to.x},${CORRIDOR_Y} ${to.x},${to.y + 11}`;
 
-    svg.appendChild(mk('polyline', { points: pts, fill: 'none', stroke: 'rgba(122,53,38,.35)', 'stroke-width': 8, 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }));
+    svg.appendChild(mk('polyline', { points: pts, fill: 'none', stroke: 'rgba(90,45,92,.35)', 'stroke-width': 8, 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }));
 
     const dash = mk('polyline', {
       points: pts, fill: 'none',
-      stroke: '#c0614e', 'stroke-width': 2,
+      stroke: '#D46ACF', 'stroke-width': 2,
       'stroke-linecap': 'round', 'stroke-linejoin': 'round',
       'stroke-dasharray': '6 4',
     }, 'animation: dash-flow .65s linear infinite;');
@@ -904,11 +907,11 @@ function buildGalleryMap(fromKey, toKey, stopIndex) {
     const arrY = to.y - 11;
     svg.appendChild(mk('polygon', {
       points: `${to.x},${arrY} ${to.x - 5},${arrY + 8} ${to.x + 5},${arrY + 8}`,
-      fill: '#c0614e',
+      fill: '#D46ACF',
     }));
 
     svg.appendChild(mk('circle', {
-      cx: from.x, cy: from.y, r: 5, fill: '#7a3526',
+      cx: from.x, cy: from.y, r: 5, fill: '#5A2D5C',
     }, 'animation: origin-pulse 1.4s ease-in-out infinite; transform-box: fill-box; transform-origin: center;'));
   }
 
@@ -1307,7 +1310,7 @@ function buildArtifact() {
   const ax = ac.getContext('2d');
 
   // Warm off-white background
-  ax.fillStyle = '#f5f2ec';
+  ax.fillStyle = '#F0E8FF';
   ax.fillRect(0, 0, pw, ph);
 
   const strokeH = ph - 90;
@@ -1363,17 +1366,17 @@ function finishArtifact(ax, w, h, strokeH) {
 
   // Theme label
   ax.textAlign    = 'center';
-  ax.fillStyle    = 'rgba(120,112,104,0.9)';
+  ax.fillStyle    = 'rgba(155,143,175,0.9)';
   ax.font         = '10px -apple-system, sans-serif';
   ax.fillText('PROTECTION  ·  THE METROPOLITAN MUSEUM OF ART', w / 2, strokeH + 30);
 
   // Title
-  ax.fillStyle = '#1a1a1a';
+  ax.fillStyle = '#2B2E34';
   ax.font      = 'italic 24px Georgia, serif';
   ax.fillText('Five Gestures, One Path', w / 2, strokeH + 58);
 
   // Date
-  ax.fillStyle = 'rgba(120,112,104,0.7)';
+  ax.fillStyle = 'rgba(155,143,175,0.7)';
   ax.font      = '10px -apple-system, sans-serif';
   const dateStr = new Date().toLocaleDateString('en-US', {
     year: 'numeric', month: 'long', day: 'numeric'
