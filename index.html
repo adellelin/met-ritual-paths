@@ -1019,9 +1019,9 @@ function continueStroke(x, y) {
   const dist  = Math.sqrt(dx * dx + dy * dy);
   const speed = dist / dt;
 
-  // Wider range than before: slow=20px, fast=0.4px, sqrt curve for fast snap
-  const t  = Math.min(speed / 1.4, 1);
-  const lw = Math.max(0.4, 20 - 19.6 * Math.pow(t, 0.5));
+  // Slow → thick (max 14), fast → thin (min 1)
+  const t  = Math.min(speed / 1.8, 1);
+  const lw = 14 - 13 * t;
 
   const alpha = 0.72 + Math.random() * 0.28;
   ctx.beginPath();
