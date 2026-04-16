@@ -611,7 +611,7 @@ html, body {
       <div class="canvas-hint" id="canvas-hint">Hold the button below and move your phone</div>
     </div>
     <div class="orient-controls">
-      <button class="btn-hold" id="btn-hold">Hold to Draw</button>
+      <button class="btn-hold" id="btn-hold">Start Drawing</button>
       <button class="btn-clear" onclick="clearCanvas()">Clear</button>
     </div>
   </div>
@@ -916,86 +916,66 @@ function clearCanvas() {
 }
 
 // ─────────────────────────────
-// HOLD BUTTON
+// DRAW BUTTON (tap-to-start / tap-to-stop)
 // ─────────────────────────────
-let noOrientTimer = null;
 
-// Wire up the hold button — called on each stop load
 function setupHoldButton() {
-  const btn = document.getElementById('btn-hold');
-
-  // Strip all previous listeners by cloning
-  const fresh = btn.cloneNode(true);
-  btn.parentNode.replaceChild(fresh, btn);
   const b = document.getElementById('btn-hold');
-
   if (!USE_ORIENTATION) {
     b.style.display = 'none';
     return;
   }
+  b.textContent = 'Start Drawing';
+  b.onclick = onDrawButtonTap;
+}
 
-  if (typeof DeviceOrientationEvent.requestPermission === 'function' && !orientGranted) {
-    // iOS: needs a click (not touchstart) to trigger permission dialog
-    b.textContent = 'Tap to Enable Motion';
-    b.addEventListener('click', function onPermClick() {
-      DeviceOrientationEvent.requestPermission()
-        .then(state => {
-          if (state === 'granted') {
-            orientGranted = true;
-            document.getElementById('capture-status').textContent = 'Motion enabled — hold to draw';
-            setupHoldButton(); // re-wire as hold button
-          } else {
-            document.getElementById('capture-status').textContent =
-              'Permission denied — check iOS Settings › Safari › Motion & Orientation';
-          }
-        })
-        .catch(() => {
-          document.getElementById('capture-status').textContent = 'Permission error.';
-        });
-    });
+function onDrawButtonTap() {
+  if (orientActive) {
+    // Second tap: stop drawing
+    stopOrientDraw();
+  } else if (typeof DeviceOrientationEvent.requestPermission === 'function' && !orientGranted) {
+    // iOS: request permission first (click event satisfies iOS requirement)
+    DeviceOrientationEvent.requestPermission()
+      .then(state => {
+        if (state === 'granted') {
+          orientGranted = true;
+          startOrientDraw();
+        } else {
+          document.getElementById('capture-status').textContent =
+            'Permission denied — enable Motion in iOS Settings › Safari';
+        }
+      })
+      .catch(() => {
+        document.getElementById('capture-status').textContent = 'Permission error.';
+      });
   } else {
-    // Permission already granted (or Android) — wire touchstart/touchend
-    b.textContent = 'Hold to Draw';
-    b.addEventListener('touchstart', holdStart, { passive: false });
-    b.addEventListener('touchend',   holdEnd);
-    b.addEventListener('touchcancel', holdEnd);
-    b.addEventListener('mousedown',  holdStart);
-    b.addEventListener('mouseup',    holdEnd);
-    b.addEventListener('mouseleave', holdEnd);
+    startOrientDraw();
   }
 }
 
-function holdStart(e) {
-  e.preventDefault();
-  if (orientActive) return;
+function startOrientDraw() {
   orientActive = true;
   orientRef    = null;
   const b = document.getElementById('btn-hold');
   b.classList.add('recording');
-  b.textContent = 'Drawing…';
-  document.getElementById('capture-status').textContent = 'Move your phone now';
+  b.textContent = 'Stop Drawing';
+  document.getElementById('capture-status').textContent = 'Move your phone…';
   window.addEventListener('deviceorientation', onOrient, true);
-
-  noOrientTimer = setTimeout(() => {
-    if (!hasDrawn) {
-      document.getElementById('capture-status').textContent =
-        'No motion detected — make sure site is open over HTTPS';
-    }
-  }, 1500);
 }
 
-function holdEnd(e) {
-  if (e) e.preventDefault();
-  clearTimeout(noOrientTimer);
+function stopOrientDraw() {
   if (!orientActive) return;
   orientActive = false;
   window.removeEventListener('deviceorientation', onOrient, true);
   endStroke();
   const b = document.getElementById('btn-hold');
   b.classList.remove('recording');
-  b.textContent = 'Hold to Draw';
-  if (hasDrawn) document.getElementById('capture-status').textContent = '';
+  b.textContent = 'Start Drawing';
+  document.getElementById('capture-status').textContent = hasDrawn ? 'Tap again to add more, or capture.' : '';
 }
+
+// Called from loadStop reset
+function holdEnd(e) { stopOrientDraw(); }
 
 function onOrient(e) {
   if (!orientActive) return;
