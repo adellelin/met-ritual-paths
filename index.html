@@ -753,7 +753,6 @@ let hasCaptured  = false;
 let canvas, ctx;
 let isDrawing = false;
 let lastX = 0, lastY = 0, lastT = 0;
-let prevLW = 1;
 
 // ─────────────────────────────
 // SCREEN MANAGEMENT
@@ -1006,7 +1005,6 @@ function onOrient(e) {
 
 function beginStroke(x, y) {
   isDrawing = true;
-  prevLW = 18;
   lastX = x; lastY = y; lastT = Date.now();
   hasDrawn = true;
   document.getElementById('canvas-hint').style.opacity = '0';
@@ -1021,11 +1019,9 @@ function continueStroke(x, y) {
   const dist  = Math.sqrt(dx * dx + dy * dy);
   const speed = dist / dt;
 
-  // sqrt curve: snaps thick→thin quickly, plateaus at hair-thin
-  const t      = Math.min(speed / 1.4, 1);
-  const target = 22 - 21.7 * Math.pow(t, 0.5);
-  prevLW = prevLW * 0.65 + target * 0.35;
-  const lw = Math.max(0.3, prevLW);
+  // Wider range than before: slow=20px, fast=0.4px, sqrt curve for fast snap
+  const t  = Math.min(speed / 1.4, 1);
+  const lw = Math.max(0.4, 20 - 19.6 * Math.pow(t, 0.5));
 
   const alpha = 0.72 + Math.random() * 0.28;
   ctx.beginPath();
